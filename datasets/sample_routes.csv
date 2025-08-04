@@ -1,0 +1,9 @@
+flight_number,airline,departure_city,arrival_city,departure_time,arrival_time,price
+AA123,American Airlines,New York,Los Angeles,2023-10-01T08:00:00,2023-10-01T11:00:00,300
+DL456,Delta Airlines,New York,San Francisco,2023-10-02T09:00:00,2023-10-02T12:30:00,350
+UA789,United Airlines,Chicago,Miami,2023-10-03T07:30:00,2023-10-03T10:00:00,200
+SW101,Southwest Airlines,Dallas,Las Vegas,2023-10-04T10:15:00,2023-10-04T11:45:00,150
+BA202,British Airways,London,New York,2023-10-05T14:00:00,2023-10-05T17:00:00,600
+AF303,Air France,Paris,Los Angeles,2023-10-06T16:30:00,2023-10-06T19:30:00,700
+LH404,Lufthansa,Frankfurt,Chicago,2023-10-07T18:00:00,2023-10-07T20:30:00,500
+EK505,Emirates,Dubai,New York,2023-10-08T22:00:00,2023-10-09T04:00:00,1200
