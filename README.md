@@ -1,57 +1,69 @@
 # Travel API Tool
 
 ## Overview
-The Travel API Tool is an integration tool designed to retrieve, process, and store travel data, specifically focusing on flight information. This project connects to the Amadeus API to fetch real-time flight data, processes it for analysis, and stores it in a database for easy retrieval.
+Travel API Tool is a Python application for collecting, processing, and storing flight data from the Amadeus API. It allows users to gather flight information for selected routes over a specified month, extract key details, and save them in a local SQLite database for analysis or reporting.
 
 ## Features
-- Connects to the Amadeus API to retrieve flight data.
-- Processes and filters flight data based on user-defined criteria.
-- Stores processed data in a database for future analysis.
-- Utility functions for date formatting and price calculations.
+- Connects to the Amadeus API using secure authentication.
+- Retrieves flight offers for multiple user-defined routes and dates.
+- Processes flight data to extract price, airline, departure time, and date.
+- Saves all processed flight details in a local SQLite database (`travel_data.db`).
+- Modular code structure for easy maintenance and extension.
 
 ## Project Structure
 ```
 travel-api-tool
 ├── src
-│   ├── main.py            # Entry point of the application
+│   ├── main.py                # Main application script
 │   ├── api
-│   │   └── client.py      # API client for connecting to Amadeus API
+│   │   └── client.py          # Amadeus API client
 │   ├── processing
-│   │   └── processor.py    # Data processing logic
+│   │   └── processor.py       # Data processing logic
 │   ├── storage
-│   │   └── database.py     # Database connection and data storage
+│   │   └── database.py        # SQLite database handler
 │   └── utils
-│       └── helpers.py      # Utility functions
+│       └── helpers.py         # Utility functions
 ├── datasets
-│   └── sample_routes.csv   # Sample datasets for selected routes
+│   └── sample_routes.csv      # Example route data
 ├── docs
-│   └── synthetic_routing_briefing.md  # Document briefing about synthetic routing
-├── requirements.txt        # Project dependencies
-└── README.md               # Project documentation
+│   └── synthetic_routing_briefing.md # Synthetic routing documentation
+├── requirements.txt           # Python dependencies
+└── README.md                  # Project documentation
 ```
 
 ## Installation
-1. Clone the repository:
+
+1. Clone this repository:
    ```
-   git clone https://github.com/yourusername/travel-api-tool.git
+   git clone https://github.com/saeed-khj/travel-api-tool.git
    ```
-2. Navigate to the project directory:
+2. Change to the project directory:
    ```
    cd travel-api-tool
    ```
-3. Install the required dependencies:
+3. Install dependencies:
    ```
    pip install -r requirements.txt
    ```
 
 ## Usage
-To run the application, execute the following command:
+
+To run the application and start collecting flight data:
 ```
 python src/main.py
 ```
+- The script will collect flight data for the routes and dates specified in `main.py`.
+- All results will be saved in `travel_data.db` in your project folder.
+
+## Database
+
+- The SQLite database (`travel_data.db`) stores all flight details.
+- You can view or query the database using Python, DB Browser for SQLite, or any SQLite-compatible tool.
 
 ## Contributing
-Contributions are welcome! Please submit a pull request or open an issue for any enhancements or bug fixes.
+
+Contributions and suggestions are welcome! Please open an issue or submit a pull request.
 
 ## License
+
 This project is licensed under the MIT License. See the LICENSE file for details.
