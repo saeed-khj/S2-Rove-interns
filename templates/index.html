@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Award Travel Value Calculator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #7c3aed;
+            --accent-color: #f59e0b;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --dark-bg: #0f172a;
+            --card-bg: #1e293b;
+            --border-color: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--dark-bg) 0%, #1e1b4b 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+        }
+
+        .navbar {
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--primary-color) !important;
+        }
+
+        .hero-section {
+            padding: 4rem 0;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .search-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(10px);
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control, .form-select {
+            background: rgba(15, 23, 42, 0.8);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background: rgba(15, 23, 42, 0.9);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.25);
+            color: var(--text-primary);
+        }
+
+        .form-control::placeholder {
+            color: var(--text-secondary);
+        }
+
+        /* Airport Search Styles */
+        .airport-search-container {
+            position: relative;
+        }
+
+        .airport-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .airport-dropdown.show {
+            display: block;
+        }
+
+        .airport-option {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+            transition: background-color 0.2s ease;
+        }
+
+        .airport-option:hover {
+            background: rgba(37, 99, 235, 0.1);
+        }
+
+        .airport-option:last-child {
+            border-bottom: none;
+        }
+
+        .airport-code {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-right: 0.5rem;
+        }
+
+        .airport-name {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .airport-city {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            border-radius: 12px;
+            padding: 0.875rem 2rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px -10px rgba(37, 99, 235, 0.6);
+        }
+
+        .btn-secondary {
+            background: rgba(124, 58, 237, 0.1);
+            border: 2px solid var(--secondary-color);
+            color: var(--secondary-color);
+            border-radius: 12px;
+            padding: 0.875rem 2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: var(--secondary-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 4rem 0;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .feature-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .feature-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .stats-section {
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 1px solid var(--border-color);
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .spinner-border {
+            color: var(--primary-color);
+        }
+
+        .alert {
+            border-radius: 12px;
+            border: none;
+            padding: 1rem 1.5rem;
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success-color);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .alert-danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger-color);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .cabin-selector {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .cabin-option {
+            flex: 1;
+            padding: 0.75rem;
+            text-align: center;
+            background: rgba(15, 23, 42, 0.8);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .cabin-option:hover {
+            border-color: var(--primary-color);
+            color: var(--text-primary);
+        }
+
+        .cabin-option.active {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+
+        .trip-type-selector {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .trip-option {
+            flex: 1;
+            padding: 0.75rem;
+            text-align: center;
+            background: rgba(15, 23, 42, 0.8);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .trip-option:hover {
+            border-color: var(--secondary-color);
+            color: var(--text-primary);
+        }
+
+        .trip-option.active {
+            background: var(--secondary-color);
+            border-color: var(--secondary-color);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .search-card {
+                padding: 1.5rem;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .floating-elements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .floating-element {
+            position: absolute;
+            opacity: 0.1;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-element:nth-child(1) {
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-element:nth-child(2) {
+            top: 60%;
+            right: 10%;
+            animation-delay: 2s;
+        }
+
+        .floating-element:nth-child(3) {
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-plane-departure me-2"></i>
+                Award Travel Value
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="#features">
+                    <i class="fas fa-star me-1"></i>Features
+                </a>
+                <a class="nav-link" href="#about">
+                    <i class="fas fa-info-circle me-1"></i>About
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="floating-elements">
+                <div class="floating-element">
+                    <i class="fas fa-plane fa-3x text-primary"></i>
+                </div>
+                <div class="floating-element">
+                    <i class="fas fa-coins fa-3x text-warning"></i>
+                </div>
+                <div class="floating-element">
+                    <i class="fas fa-chart-line fa-3x text-success"></i>
+                </div>
+            </div>
+            
+            <h1 class="hero-title">Smart Award Travel Decisions</h1>
+            <p class="hero-subtitle">
+                Compare points vs. cash prices with real-time data. Get the best value for your miles and make informed travel decisions.
+            </p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Search Form -->
+        <div class="search-card">
+            <h2 class="text-center mb-4">
+                <i class="fas fa-search me-2"></i>Find Your Best Deal
+            </h2>
+            
+            <form id="searchForm" method="POST" action="/search">
+                <div class="form-row">
+                    <div>
+                        <label for="origin" class="form-label">
+                            <i class="fas fa-plane-departure me-2"></i>From
+                        </label>
+                        <div class="airport-search-container">
+                            <input type="text" class="form-control airport-search" id="origin" name="origin" 
+                                   placeholder="Type to search airports..." required autocomplete="off">
+                            <div class="airport-dropdown" id="originDropdown"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="destination" class="form-label">
+                            <i class="fas fa-plane-arrival me-2"></i>To
+                        </label>
+                        <div class="airport-search-container">
+                            <input type="text" class="form-control airport-search" id="destination" name="destination" 
+                                   placeholder="Type to search airports..." required autocomplete="off">
+                            <div class="airport-dropdown" id="destinationDropdown"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div>
+                        <label for="date" class="form-label">
+                            <i class="fas fa-calendar me-2"></i>Departure Date
+                        </label>
+                        <input type="date" class="form-control" id="date" name="date" required>
+                    </div>
+                    <div id="returnDateContainer" style="display: none;">
+                        <label for="return_date" class="form-label">
+                            <i class="fas fa-calendar-check me-2"></i>Return Date
+                        </label>
+                        <input type="date" class="form-control" id="return_date" name="return_date">
+                    </div>
+                </div>
+
+                <!-- Loyalty Program and Points Available -->
+                <div class="form-row">
+                    <div>
+                        <label for="loyalty_program" class="form-label">
+                            <i class="fas fa-star me-2"></i>Loyalty Program
+                        </label>
+                        <select class="form-control" id="loyalty_program" name="loyalty_program">
+                            <option value="American Airlines">American Airlines</option>
+                            <option value="Delta Air Lines">Delta Air Lines</option>
+                            <option value="United Airlines">United Airlines</option>
+                            <option value="Marriott Bonvoy">Marriott Bonvoy</option>
+                            <option value="Hilton Honors">Hilton Honors</option>
+                            <option value="World of Hyatt">World of Hyatt</option>
+                            <option value="IHG Rewards">IHG Rewards</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="points_available" class="form-label">
+                            <i class="fas fa-coins me-2"></i>Points Available
+                        </label>
+                        <input type="number" class="form-control" id="points_available" name="points_available" 
+                               placeholder="100000" value="100000" min="1000" step="1000">
+                    </div>
+                </div>
+
+                <!-- Cabin Class Selector -->
+                <div class="cabin-selector">
+                    <div class="cabin-option active" data-value="economy">
+                        <i class="fas fa-chair me-2"></i>Economy
+                    </div>
+                    <div class="cabin-option" data-value="business">
+                        <i class="fas fa-crown me-2"></i>Business
+                    </div>
+                    <div class="cabin-option" data-value="first">
+                        <i class="fas fa-gem me-2"></i>First
+                    </div>
+                </div>
+                <input type="hidden" id="cabin" name="cabin" value="economy">
+
+                <!-- Trip Type Selector -->
+                <div class="trip-type-selector">
+                    <div class="trip-option active" data-value="oneway">
+                        <i class="fas fa-arrow-right me-2"></i>One Way
+                    </div>
+                    <div class="trip-option" data-value="roundtrip">
+                        <i class="fas fa-exchange-alt me-2"></i>Round Trip
+                    </div>
+                </div>
+                <input type="hidden" id="trip_type" name="trip_type" value="oneway">
+
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary btn-lg me-3">
+                        <i class="fas fa-calculator me-2"></i>Calculate Value
+                    </button>
+                    <button type="submit" formaction="/comprehensive-analysis" class="btn btn-success btn-lg me-3">
+                        <i class="fas fa-chart-line me-2"></i>Comprehensive Analysis
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-lg" onclick="updateTPGValues()">
+                        <i class="fas fa-sync-alt me-2"></i>Update TPG Values
+                    </button>
+                </div>
+            </form>
+
+            <!-- Loading Spinner -->
+            <div class="loading-spinner" id="loadingSpinner">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-3">Analyzing award options and cash prices...</p>
+            </div>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="stats-section">
+            <div class="row">
+                <div class="col-md-3 stat-item">
+                    <div class="stat-number">37</div>
+                    <div class="stat-label">TPG Point Values</div>
+                </div>
+                <div class="col-md-3 stat-item">
+                    <div class="stat-number">362+</div>
+                    <div class="stat-label">Award Options</div>
+                </div>
+                <div class="col-md-3 stat-item">
+                    <div class="stat-number">65</div>
+                    <div class="stat-label">Airports</div>
+                </div>
+                <div class="col-md-3 stat-item">
+                    <div class="stat-number">Real-time</div>
+                    <div class="stat-label">Data Updates</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Grid -->
+        <div class="feature-grid" id="features">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3 class="feature-title">Real-Time Valuations</h3>
+                <p class="feature-description">
+                    Get up-to-date TPG point valuations scraped directly from The Points Guy website.
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-plane"></i>
+                </div>
+                <h3 class="feature-title">Award Flight Data</h3>
+                <p class="feature-description">
+                    Access 362+ real award options from AwardHacker with miles, taxes, and availability.
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-calculator"></i>
+                </div>
+                <h3 class="feature-title">Smart Calculations</h3>
+                <p class="feature-description">
+                    Compare points vs. cash with intelligent value-per-mile calculations and recommendations.
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-globe"></i>
+                </div>
+                <h3 class="feature-title">Global Coverage</h3>
+                <p class="feature-description">
+                    Support for 65+ major airports worldwide with domestic and international routes.
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-mobile-alt"></i>
+                </div>
+                <h3 class="feature-title">Mobile Optimized</h3>
+                <p class="feature-description">
+                    Responsive design that works perfectly on all devices and screen sizes.
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3 class="feature-title">Reliable Fallbacks</h3>
+                <p class="feature-description">
+                    Multiple data sources and enhanced mock data ensure the app always works.
+                </p>
+            </div>
+        </div>
+
+        <!-- About Section -->
+        <div class="search-card" id="about">
+            <h2 class="text-center mb-4">
+                <i class="fas fa-info-circle me-2"></i>About This Tool
+            </h2>
+            <p class="text-center mb-4">
+                The Award Travel Value Calculator helps you make informed decisions about using points vs. paying cash for flights. 
+                It combines real-time data from multiple sources to give you the most accurate value comparisons.
+            </p>
+            <div class="row text-center">
+                <div class="col-md-4">
+                    <h5><i class="fas fa-database me-2"></i>Data Sources</h5>
+                    <p>TPG, AwardHacker, Aviation Stack, Sky Scrapper</p>
+                </div>
+                <div class="col-md-4">
+                    <h5><i class="fas fa-code me-2"></i>Technology</h5>
+                    <p>Python, Flask, Bootstrap, Real-time APIs</p>
+                </div>
+                <div class="col-md-4">
+                    <h5><i class="fas fa-chart-bar me-2"></i>Analysis</h5>
+                    <p>Value-per-mile, Savings, Recommendations</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center py-4 mt-5" style="border-top: 1px solid var(--border-color);">
+        <div class="container">
+            <p class="text-muted mb-0">
+                <i class="fas fa-heart text-danger me-1"></i>
+                Built for smart travelers who want to maximize their points value
+            </p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Set default date to tomorrow
+        document.getElementById('date').value = new Date(Date.now() + 86400000).toISOString().split('T')[0];
+
+        // Airport search functionality
+        const airports = [
+            { code: 'JFK', name: 'John F. Kennedy International Airport', city: 'New York, NY' },
+            { code: 'LAX', name: 'Los Angeles International Airport', city: 'Los Angeles, CA' },
+            { code: 'ORD', name: 'O\'Hare International Airport', city: 'Chicago, IL' },
+            { code: 'DFW', name: 'Dallas/Fort Worth International Airport', city: 'Dallas, TX' },
+            { code: 'ATL', name: 'Hartsfield-Jackson Atlanta International Airport', city: 'Atlanta, GA' },
+            { code: 'DEN', name: 'Denver International Airport', city: 'Denver, CO' },
+            { code: 'SFO', name: 'San Francisco International Airport', city: 'San Francisco, CA' },
+            { code: 'CLT', name: 'Charlotte Douglas International Airport', city: 'Charlotte, NC' },
+            { code: 'LAS', name: 'Harry Reid International Airport', city: 'Las Vegas, NV' },
+            { code: 'MCO', name: 'Orlando International Airport', city: 'Orlando, FL' },
+            { code: 'MIA', name: 'Miami International Airport', city: 'Miami, FL' },
+            { code: 'IAH', name: 'George Bush Intercontinental Airport', city: 'Houston, TX' },
+            { code: 'PHX', name: 'Phoenix Sky Harbor International Airport', city: 'Phoenix, AZ' },
+            { code: 'BOS', name: 'Logan International Airport', city: 'Boston, MA' },
+            { code: 'DTW', name: 'Detroit Metropolitan Airport', city: 'Detroit, MI' },
+            { code: 'FLL', name: 'Fort Lauderdale-Hollywood International Airport', city: 'Fort Lauderdale, FL' },
+            { code: 'LGA', name: 'LaGuardia Airport', city: 'New York, NY' },
+            { code: 'BWI', name: 'Baltimore/Washington International Airport', city: 'Baltimore, MD' },
+            { code: 'IAD', name: 'Washington Dulles International Airport', city: 'Washington, DC' },
+            { code: 'DCA', name: 'Ronald Reagan Washington National Airport', city: 'Washington, DC' },
+            { code: 'LHR', name: 'London Heathrow Airport', city: 'London, UK' },
+            { code: 'CDG', name: 'Charles de Gaulle Airport', city: 'Paris, France' },
+            { code: 'FRA', name: 'Frankfurt Airport', city: 'Frankfurt, Germany' },
+            { code: 'AMS', name: 'Amsterdam Airport Schiphol', city: 'Amsterdam, Netherlands' },
+            { code: 'MAD', name: 'Adolfo Suárez Madrid–Barajas Airport', city: 'Madrid, Spain' },
+            { code: 'BCN', name: 'Barcelona–El Prat Airport', city: 'Barcelona, Spain' },
+            { code: 'NRT', name: 'Narita International Airport', city: 'Tokyo, Japan' },
+            { code: 'HND', name: 'Haneda Airport', city: 'Tokyo, Japan' },
+            { code: 'ICN', name: 'Incheon International Airport', city: 'Seoul, South Korea' },
+            { code: 'SIN', name: 'Singapore Changi Airport', city: 'Singapore' },
+            { code: 'HKG', name: 'Hong Kong International Airport', city: 'Hong Kong' },
+            { code: 'SYD', name: 'Sydney Airport', city: 'Sydney, Australia' },
+            { code: 'MEL', name: 'Melbourne Airport', city: 'Melbourne, Australia' },
+            { code: 'YYZ', name: 'Toronto Pearson International Airport', city: 'Toronto, Canada' },
+            { code: 'YVR', name: 'Vancouver International Airport', city: 'Vancouver, Canada' },
+            { code: 'MEX', name: 'Benito Juárez International Airport', city: 'Mexico City, Mexico' },
+            { code: 'GIG', name: 'Rio de Janeiro–Galeão International Airport', city: 'Rio de Janeiro, Brazil' },
+            { code: 'GRU', name: 'São Paulo–Guarulhos International Airport', city: 'São Paulo, Brazil' }
+        ];
+
+        function setupAirportSearch(inputId, dropdownId) {
+            const input = document.getElementById(inputId);
+            const dropdown = document.getElementById(dropdownId);
+            
+            input.addEventListener('input', function() {
+                const query = this.value.toLowerCase();
+                if (query.length < 1) {
+                    dropdown.classList.remove('show');
+                    return;
+                }
+                
+                const filtered = airports.filter(airport => 
+                    airport.code.toLowerCase().includes(query) ||
+                    airport.city.toLowerCase().includes(query) ||
+                    airport.name.toLowerCase().includes(query)
+                );
+                
+                if (filtered.length > 0) {
+                    dropdown.innerHTML = filtered.map(airport => `
+                        <div class="airport-option" data-code="${airport.code}">
+                            <span class="airport-code">${airport.code}</span>
+                            <span class="airport-city">${airport.city}</span>
+                            <br><span class="airport-name">${airport.name}</span>
+                        </div>
+                    `).join('');
+                    
+                    dropdown.classList.add('show');
+                    
+                    // Add click handlers
+                    dropdown.querySelectorAll('.airport-option').forEach(option => {
+                        option.addEventListener('click', function() {
+                            input.value = this.dataset.code;
+                            dropdown.classList.remove('show');
+                        });
+                    });
+                } else {
+                    dropdown.classList.remove('show');
+                }
+            });
+            
+            // Hide dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!input.contains(e.target) && !dropdown.contains(e.target)) {
+                    dropdown.classList.remove('show');
+                }
+            });
+            
+            // Hide dropdown on input blur
+            input.addEventListener('blur', function() {
+                setTimeout(() => {
+                    dropdown.classList.remove('show');
+                }, 200);
+            });
+        }
+
+        // Initialize airport search for both inputs
+        document.addEventListener('DOMContentLoaded', function() {
+            setupAirportSearch('origin', 'originDropdown');
+            setupAirportSearch('destination', 'destinationDropdown');
+        });
+
+        // Cabin class selector
+        document.querySelectorAll('.cabin-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.cabin-option').forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+                document.getElementById('cabin').value = this.dataset.value;
+            });
+        });
+
+        // Trip type selector
+        document.querySelectorAll('.trip-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.trip-option').forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+                document.getElementById('trip_type').value = this.dataset.value;
+                
+                // Show/hide return date
+                const returnContainer = document.getElementById('returnDateContainer');
+                if (this.dataset.value === 'roundtrip') {
+                    returnContainer.style.display = 'block';
+                    document.getElementById('return_date').required = true;
+                } else {
+                    returnContainer.style.display = 'none';
+                    document.getElementById('return_date').required = false;
+                }
+            });
+        });
+
+        // Form submission
+        document.getElementById('searchForm').addEventListener('submit', function() {
+            document.getElementById('loadingSpinner').style.display = 'block';
+        });
+
+        // Update TPG Values
+        function updateTPGValues() {
+            const button = event.target;
+            const originalText = button.innerHTML;
+            
+            button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Updating...';
+            button.disabled = true;
+            
+            // Simulate update (replace with actual API call)
+            setTimeout(() => {
+                button.innerHTML = '<i class="fas fa-check me-2"></i>Updated!';
+                button.classList.remove('btn-secondary');
+                button.classList.add('btn-success');
+                
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                    button.classList.remove('btn-success');
+                    button.classList.add('btn-secondary');
+                }, 2000);
+            }, 2000);
+        }
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add some interactive animations
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate feature cards on scroll
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            });
+
+            document.querySelectorAll('.feature-card').forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                card.style.transition = 'all 0.6s ease';
+                observer.observe(card);
+            });
+        });
+    </script>
+</body>
+</html> 

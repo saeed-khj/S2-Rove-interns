@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprehensive Redemption Analysis - Award Travel Value Calculator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #7c3aed;
+            --accent-color: #f59e0b;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --dark-bg: #0f172a;
+            --card-bg: #1e293b;
+            --border-color: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--dark-bg) 0%, #1e1b4b 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            padding-top: 80px;
+        }
+
+        .navbar {
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--primary-color) !important;
+        }
+
+        .results-header {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .redemption-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .redemption-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.3);
+        }
+
+        .redemption-card.best-value {
+            border: 2px solid var(--success-color);
+            background: linear-gradient(135deg, var(--card-bg) 0%, rgba(16, 185, 129, 0.1) 100%);
+        }
+
+        .redemption-type-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-flight {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .badge-hotel {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .badge-gift-card {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .badge-synthetic {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .value-per-point {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--success-color);
+        }
+
+        .redemption-details {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .btn-back {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            border-radius: 12px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .btn-back:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+
+        .summary-stats {
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-plane-departure me-2"></i>
+                Award Travel Value
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/">
+                    <i class="fas fa-home me-1"></i>Home
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Results Header -->
+        <div class="results-header">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="mb-3">
+                        <i class="fas fa-chart-line me-2"></i>Comprehensive Redemption Analysis
+                    </h1>
+                    <p class="mb-0 text-muted">
+                        <strong>Route:</strong> {{ search_params.origin }} → {{ search_params.destination }} | 
+                        <strong>Date:</strong> {{ search_params.date }} | 
+                        <strong>Program:</strong> {{ search_params.loyalty_program }} | 
+                        <strong>Points:</strong> {{ "{:,}".format(search_params.points_available) }}
+                    </p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <a href="/" class="btn-back">
+                        <i class="fas fa-arrow-left me-2"></i>New Search
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary Statistics -->
+        <div class="summary-stats">
+            <div class="row">
+                <div class="col-md-3 stat-item">
+                    <div class="stat-number">{{ redemptions|length }}</div>
+                    <div class="stat-label">Total Options</div>
+                </div>
+                <div class="col-md-3 stat-item">
+                    <div class="stat-number">{{ redemption_groups.direct_flights|length }}</div>
+                    <div class="stat-label">Direct Flights</div>
+                </div>
+                <div class="col-md-3 stat-item">
+                    <div class="stat-number">{{ redemption_groups.hotels|length }}</div>
+                    <div class="stat-label">Hotel Options</div>
+                </div>
+                <div class="col-md-3 stat-item">
+                    <div class="stat-number">{{ redemption_groups.gift_cards|length }}</div>
+                    <div class="stat-label">Gift Cards</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Recommendations -->
+        <h2 class="mb-4">
+            <i class="fas fa-star me-2"></i>Top Recommendations (Ranked by Value)
+        </h2>
+
+        {% for redemption in redemptions[:5] %}
+        <div class="redemption-card {% if loop.first %}best-value{% endif %}">
+            <div class="redemption-type-badge badge-{{ redemption.redemption_type.split('_')[0] }}">
+                {% if redemption.redemption_type == 'direct_flight' %}✈️ Flight
+                {% elif redemption.redemption_type == 'hotel' %}🏨 Hotel
+                {% elif redemption.redemption_type == 'gift_card' %}🎁 Gift Card
+                {% elif redemption.redemption_type == 'synthetic_routing' %}🔄 Synthetic
+                {% else %}{{ redemption.redemption_type|title }}{% endif %}
+            </div>
+
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h4 class="mb-2">
+                        {% if redemption.redemption_type == 'direct_flight' %}
+                            {{ redemption.airline }} - {{ redemption.origin }}-{{ redemption.destination }}
+                        {% elif redemption.redemption_type == 'hotel' %}
+                            {{ redemption.name }} (Category {{ redemption.category }})
+                        {% elif redemption.redemption_type == 'gift_card' %}
+                            {{ redemption.partner }} ${{ redemption.value }} Gift Card
+                        {% elif redemption.redemption_type == 'synthetic_routing' %}
+                            {{ redemption.origin }}-{{ redemption.connection }}-{{ redemption.destination }}
+                        {% endif %}
+                    </h4>
+                    
+                    <div class="redemption-details">
+                        {% if redemption.redemption_type == 'direct_flight' %}
+                            <strong>{{ "{:,}".format(redemption.miles) }} miles</strong> + ${{ redemption.taxes }} taxes
+                            <br>Cash price: ${{ redemption.cash_price }} | Duration: {{ redemption.duration }}
+                        {% elif redemption.redemption_type == 'hotel' %}
+                            <strong>{{ "{:,}".format(redemption.total_points) }} points</strong> for {{ redemption.nights }} nights
+                            <br>Cash value: ${{ redemption.total_cash_value }} | {{ redemption.loyalty_program }}
+                        {% elif redemption.redemption_type == 'gift_card' %}
+                            <strong>{{ "{:,}".format(redemption.points_needed) }} points</strong> for ${{ redemption.value }} value
+                            <br>{{ redemption.loyalty_program }} | {{ redemption.points_per_dollar }} pts/$1
+                        {% elif redemption.redemption_type == 'synthetic_routing' %}
+                            <strong>{{ "{:,}".format(redemption.total_points) }} total points</strong>
+                            <br>Via {{ redemption.connection }} | Cash value: ${{ redemption.total_cash_value }}
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-4 text-end">
+                    <div class="value-per-point">
+                        {{ "%.3f"|format(redemption.value_per_point) }}¢ per point
+                    </div>
+                    {% if loop.first %}
+                        <div class="text-success fw-bold">🏆 Best Value!</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+        <!-- Detailed Breakdown by Category -->
+        <div class="row mt-5">
+            <!-- Direct Flights -->
+            {% if redemption_groups.direct_flights %}
+            <div class="col-md-6 mb-4">
+                <h3><i class="fas fa-plane me-2"></i>Direct Flight Options</h3>
+                {% for flight in redemption_groups.direct_flights %}
+                <div class="redemption-card">
+                    <h5>{{ flight.airline }}</h5>
+                    <p class="mb-1">{{ "{:,}".format(flight.miles) }} miles + ${{ flight.taxes }} taxes</p>
+                    <p class="mb-1">Cash: ${{ flight.cash_price }} | Value: {{ "%.3f"|format(flight.value_per_point) }}¢/point</p>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Hotels -->
+            {% if redemption_groups.hotels %}
+            <div class="col-md-6 mb-4">
+                <h3><i class="fas fa-bed me-2"></i>Hotel Options</h3>
+                {% for hotel in redemption_groups.hotels %}
+                <div class="redemption-card">
+                    <h5>{{ hotel.name }}</h5>
+                    <p class="mb-1">{{ "{:,}".format(hotel.total_points) }} points for {{ hotel.nights }} nights</p>
+                    <p class="mb-1">Cash: ${{ hotel.total_cash_value }} | Value: {{ "%.3f"|format(hotel.value_per_point) }}¢/point</p>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Gift Cards -->
+            {% if redemption_groups.gift_cards %}
+            <div class="col-md-6 mb-4">
+                <h3><i class="fas fa-gift me-2"></i>Gift Card Options</h3>
+                {% for gift in redemption_groups.gift_cards %}
+                <div class="redemption-card">
+                    <h5>{{ gift.partner }} ${{ gift.value }}</h5>
+                    <p class="mb-1">{{ "{:,}".format(gift.points_needed) }} points</p>
+                    <p class="mb-1">Value: {{ "%.3f"|format(gift.value_per_point) }}¢/point</p>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Synthetic Routing -->
+            {% if redemption_groups.synthetic_routing %}
+            <div class="col-md-6 mb-4">
+                <h3><i class="fas fa-route me-2"></i>Synthetic Routing</h3>
+                {% for route in redemption_groups.synthetic_routing %}
+                <div class="redemption-card">
+                    <h5>{{ route.origin }}-{{ route.connection }}-{{ route.destination }}</h5>
+                    <p class="mb-1">{{ "{:,}".format(route.total_points) }} total points</p>
+                    <p class="mb-1">Cash: ${{ route.total_cash_value }} | Value: {{ "%.3f"|format(route.value_per_point) }}¢/point</p>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Analysis Summary -->
+        <div class="results-header mt-5">
+            <h3><i class="fas fa-lightbulb me-2"></i>Analysis Summary</h3>
+            <p class="mb-3">
+                This comprehensive analysis compares multiple redemption options for your {{ search_params.loyalty_program }} points. 
+                The results are ranked by value-per-point, helping you maximize the value of your loyalty currency.
+            </p>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>💡 Key Insights:</h5>
+                    <ul>
+                        <li><strong>Best Value:</strong> {{ redemptions[0].redemption_type.replace('_', ' ').title() if redemptions else 'N/A' }}</li>
+                        <li><strong>Points Range:</strong> {{ "{:,}".format(redemptions[-1].miles if redemptions and redemptions[-1].redemption_type == 'direct_flight' else redemptions[-1].total_points if redemptions else 0) }} - {{ "{:,}".format(redemptions[0].miles if redemptions and redemptions[0].redemption_type == 'direct_flight' else redemptions[0].total_points if redemptions else 0) }} points</li>
+                        <li><strong>Value Range:</strong> {{ "%.3f"|format(redemptions[-1].value_per_point if redemptions else 0) }}¢ - {{ "%.3f"|format(redemptions[0].value_per_point if redemptions else 0) }}¢ per point</li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h5>🎯 Recommendations:</h5>
+                    <ul>
+                        <li>Consider <strong>synthetic routing</strong> for potentially better value</li>
+                        <li>Compare <strong>hotel redemptions</strong> if staying at destination</li>
+                        <li>Evaluate <strong>gift card options</strong> for immediate value</li>
+                        <li>Factor in <strong>taxes and fees</strong> for accurate comparison</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
